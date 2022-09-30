@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Duration
+import java.time.LocalDate
 
 @RestController
 class RSocketTestController(
@@ -25,9 +26,15 @@ class RSocketTestController(
     }
     @GetMapping("/channel")
     fun test2(): Flux<String> {
+        val employees : MutableList<Employees> = mutableListOf()
+
+        for(i in 1..20) {
+            employees.add(Employees(i, LocalDate.now(), "No.$i Nam", "JJ", "M", LocalDate.now()))
+        }
+
         return rSocketRequester
             .route("channel")
-            .data(Flux.just("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"))
+            .data(Flux.fromIterable(employees))
             .retrieveFlux<String>()
             .take(10)
     }
