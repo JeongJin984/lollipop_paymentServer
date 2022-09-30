@@ -18,9 +18,17 @@ class RSocketTestController(
     @GetMapping("/rsocket")
     fun test(): Flux<Employees> {
         return rSocketRequester
-            .route("test1")
+            .route("requeststream")
             .retrieveFlux<Employees>()
             //.delayElements(Duration.ofNanos(1))
+            .take(10)
+    }
+    @GetMapping("/channel")
+    fun test2(): Flux<String> {
+        return rSocketRequester
+            .route("channel")
+            .data(Flux.just("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"))
+            .retrieveFlux<String>()
             .take(10)
     }
 }
